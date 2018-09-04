@@ -10,6 +10,7 @@ PREFIX = '/opt/dissociated-puppet'
 
 ruby_url = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz"
 facter_url = "https://downloads.puppetlabs.com/facter/facter-2.4.6.tar.gz"
+hiera_url = "https://downloads.puppetlabs.com/hiera/hiera-3.2.0.tar.gz"
 puppet_url = "https://downloads.puppetlabs.com/puppet/puppet-4.8.2.tar.gz"
 
 # SIZE:   17813577 bytes
@@ -31,6 +32,13 @@ facter_configuration = {
     'mandir': '/opt/dissociated-puppet/man'
 }
 
+hiera_configuration = {
+    'sitelibdir': '/opt/dissociated-puppet/lib/ruby/site_ruby',
+    'bindir': '/opt/dissociated-puppet/bin',
+    'mandir': '/opt/dissociated-puppet/man',
+    'configdir': '/opt/dissociated-puppet/etc'
+}
+
 puppet_configuration = {
     'configdir': '/opt/dissociated-puppet/etc/puppet',
     'codedir': '/opt/dissociated-puppet/etc/puppet/code',
@@ -49,6 +57,7 @@ def get_install_args(configuration):
     for k, v in configuration.items():
         args.append("--%s=%s" % (k, v))
     return args
+
 
 with util.cd(workspace):
     debug("downloading ruby")
@@ -70,6 +79,17 @@ with util.cd(workspace):
         subprocess.check_call(
             ['sudo', RUBY_PATH, 'install.rb']
             + get_install_args(facter_configuration)
+        )
+
+    debug("downloading hiera")
+    local_filename = "hiera.tar.gz"
+    urllib.request.urlretrieve(hiera_url, local_filename)
+    util.extract_tar(local_filename)
+
+    with util.cd("hiera-3.2.0"):
+        subprocess.check_call(
+            ['sudo', RUBY_PATH, 'install.rb']
+            + get_install_args(hiera_configuration)
         )
 
     debug("downloading puppet")
