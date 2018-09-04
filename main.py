@@ -35,6 +35,8 @@ puppet_configuration = {
     'mandir': '/opt/dissociated-puppet/man'
 }
 
+RUBY_PATH = "/opt/dissociated-puppet/bin/ruby"
+
 def get_install_args():
     args = []
     for k, v in puppet_configuration.items():
@@ -42,15 +44,15 @@ def get_install_args():
     return args
 
 with util.cd(workspace):
-    # debug("downloading ruby")
-    # local_filename = 'ruby.tar.gz'
-    # urllib.request.urlretrieve(ruby_url, local_filename)
-    # util.extract_tar(local_filename)
+    debug("downloading ruby")
+    local_filename = 'ruby.tar.gz'
+    urllib.request.urlretrieve(ruby_url, local_filename)
+    util.extract_tar(local_filename)
 
-    # with util.cd("ruby-2.3.3"):
-    #     subprocess.check_call(['./configure', '--prefix', PREFIX])
-    #     subprocess.check_call(['make'])
-    #     subprocess.check_call(['sudo', 'make', 'install'])
+    with util.cd("ruby-2.3.3"):
+        subprocess.check_call(['./configure', '--prefix', PREFIX])
+        subprocess.check_call(['make'])
+        subprocess.check_call(['sudo', 'make', 'install'])
 
     debug("downloading puppet")
     local_filename = 'puppet.tar.gz'
@@ -58,4 +60,4 @@ with util.cd(workspace):
     util.extract_tar(local_filename)
 
     with util.cd("puppet-4.8.2"):
-        subprocess.check_call(['sudo', './install.rb'] + get_install_args())
+        subprocess.check_call(['sudo', RUBY_PATH, 'install.rb'] + get_install_args())
