@@ -4,6 +4,7 @@ from logging import debug
 import subprocess
 import util
 import tarfile
+import pathlib
 
 PREFIX = '/opt/dissociated-puppet'
 
@@ -21,6 +22,7 @@ logging.basicConfig(
 )
 
 workspace = "/home/amoe/workspace"
+pathlib.Path(workspace).mkdir(parents=True, exist_ok=True)
 
 with util.cd(workspace):
     debug("downloading ruby")
