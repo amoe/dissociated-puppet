@@ -78,4 +78,7 @@ with util.cd(workspace):
     util.extract_tar(local_filename)
 
     with util.cd("puppet-4.8.2"):
-        subprocess.check_call(['sudo', RUBY_PATH, 'install.rb'] + get_install_args())
+        subprocess.check_call(
+            ['sudo', RUBY_PATH, 'install.rb']
+            + get_install_args(puppet_configuration)
+        )
