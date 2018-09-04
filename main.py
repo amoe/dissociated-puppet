@@ -22,7 +22,7 @@ logging.basicConfig(
 )
 
 workspace = "/home/amoe/workspace"
-pathlib.Path(workspace).mkdir(parents=True, exist_ok=True)
+util.mkdir_uncaring(workspace)
 
 with util.cd(workspace):
     debug("downloading ruby")

@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import os
 import tarfile
+import errno
 
 # from cdunn2001 on SO
 @contextmanager
@@ -26,3 +27,12 @@ def extract_tar(path):
         finally:
             os.chmod(file_.name, file_.mode)
     tar.close()
+
+
+# replaceable with a pathlib operation in later pythons but not in 3.4
+def mkdir_uncaring(directory):
+    try:
+        os.makedirs(directory)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
