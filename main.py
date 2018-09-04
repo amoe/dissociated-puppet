@@ -8,8 +8,8 @@ import pathlib
 
 PREFIX = '/opt/dissociated-puppet'
 
-url = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz"
-url2 = "https://downloads.puppetlabs.com/puppet/puppet-4.8.2.tar.gz"
+ruby_url = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz"
+puppet_url = "https://downloads.puppetlabs.com/puppet/puppet-4.8.2.tar.gz"
 
 # SIZE:   17813577 bytes
 # SHA1:   1014ee699071aa2ddd501907d18cbe15399c997d
@@ -24,13 +24,38 @@ logging.basicConfig(
 workspace = "/home/amoe/workspace"
 util.mkdir_uncaring(workspace)
 
+puppet_configuration = {
+    'configdir': '/opt/dissociated-puppet/etc/puppet',
+    'codedir': '/opt/dissociated-puppet/etc/puppet/code',
+    'sitelibdir': '/opt/dissociated-puppet/lib/ruby/site_ruby',
+    'vardir': '/opt/dissociated-puppet/lib/ruby/site_ruby',
+    'rundir': '/opt/dissociated-puppet/var/run', 
+    'logdir': '/opt/dissociated-puppet/var/log',
+    'bindir': '/opt/dissociated-puppet/bin',
+    'mandir': '/opt/dissociated-puppet/man'
+}
+
+def get_install_args():
+    args = []
+    for k, v in puppet_configuration.items():
+        args.append("--%s=%s" % (k, v))
+    return args
+
 with util.cd(workspace):
-    debug("downloading ruby")
-    local_filename = 'ruby.tar.gz'
-    urllib.request.urlretrieve(url, local_filename)
+    # debug("downloading ruby")
+    # local_filename = 'ruby.tar.gz'
+    # urllib.request.urlretrieve(ruby_url, local_filename)
+    # util.extract_tar(local_filename)
+
+    # with util.cd("ruby-2.3.3"):
+    #     subprocess.check_call(['./configure', '--prefix', PREFIX])
+    #     subprocess.check_call(['make'])
+    #     subprocess.check_call(['sudo', 'make', 'install'])
+
+    debug("downloading puppet")
+    local_filename = 'puppet.tar.gz'
+    urllib.request.urlretrieve(puppet_url, local_filename)
     util.extract_tar(local_filename)
 
-    with util.cd("ruby-2.3.3"):
-        subprocess.check_call(['./configure', '--prefix', PREFIX])
-        subprocess.check_call(['make'])
-        subprocess.check_call(['sudo', 'make', 'install'])
+    with util.cd("puppet-4.8.2"):
+        subprocess.check_call(['sudo', './install.rb'] + get_install_args())
