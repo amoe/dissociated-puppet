@@ -5,6 +5,8 @@ import subprocess
 import util
 import tarfile
 
+PREFIX = '/opt/dissociated-puppet'
+
 url = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz"
 url2 = "https://downloads.puppetlabs.com/puppet/puppet-4.8.2.tar.gz"
 
@@ -27,5 +29,6 @@ with util.cd(workspace):
     util.extract_tar(local_filename)
 
     with util.cd("ruby-2.3.3"):
-        subprocess.check_call(['./configure'])
+        subprocess.check_call(['./configure', '--prefix', PREFIX])
         subprocess.check_call(['make'])
+        subprocess.check_call(['sudo', 'make', 'install'])
