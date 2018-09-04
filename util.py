@@ -13,6 +13,8 @@ def cd(newdir):
         os.chdir(prevdir)
 
 
+# This hackery is needed because some files may have 0600 permissions or
+# whatever and tarfile will break in this case
 def extract_tar(path):
     tar = tarfile.open(path, 'r:gz', errorlevel=1)
     for file_ in tar:
