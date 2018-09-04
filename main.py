@@ -9,6 +9,7 @@ import pathlib
 PREFIX = '/opt/dissociated-puppet'
 
 ruby_url = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz"
+facter_url = "https://downloads.puppetlabs.com/facter/facter-2.4.6.tar.gz"
 puppet_url = "https://downloads.puppetlabs.com/puppet/puppet-4.8.2.tar.gz"
 
 # SIZE:   17813577 bytes
@@ -24,6 +25,12 @@ logging.basicConfig(
 workspace = "/home/amoe/workspace"
 util.mkdir_uncaring(workspace)
 
+facter_configuration = {
+    'sitelibdir': '/opt/dissociated-puppet/lib/ruby/site_ruby',
+    'bindir': '/opt/dissociated-puppet/bin',
+    'mandir': '/opt/dissociated-puppet/man'
+}
+
 puppet_configuration = {
     'configdir': '/opt/dissociated-puppet/etc/puppet',
     'codedir': '/opt/dissociated-puppet/etc/puppet/code',
@@ -37,9 +44,9 @@ puppet_configuration = {
 
 RUBY_PATH = "/opt/dissociated-puppet/bin/ruby"
 
-def get_install_args():
+def get_install_args(configuration):
     args = []
-    for k, v in puppet_configuration.items():
+    for k, v in configuration.items():
         args.append("--%s=%s" % (k, v))
     return args
 
@@ -53,6 +60,17 @@ with util.cd(workspace):
         subprocess.check_call(['./configure', '--prefix', PREFIX])
         subprocess.check_call(['make'])
         subprocess.check_call(['sudo', 'make', 'install'])
+
+    debug("downloading facter")
+    local_filename = "facter.tar.gz"
+    urllib.request.urlretrieve(facter_url, local_filename)
+    util.extract_tar(local_filename)
+
+    with util.cd("facter-2.4.6"):
+        subprocess.check_call(
+            ['sudo', RUBY_PATH, 'install.rb']
+            + get_install_args(facter_configuration)
+        )
 
     debug("downloading puppet")
     local_filename = 'puppet.tar.gz'
