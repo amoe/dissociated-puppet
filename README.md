@@ -9,7 +9,7 @@
 
 ## Masterless usage with an existing Puppet repository
 
-    puppet module install --target-dir=modules puppetlabs-apache
+    sudo /opt/dissociated-puppet/bin/puppet module install --target-dir=modules puppetlabs-apache
 
 From inside your puppet manifests directory, you can do the following:
 
