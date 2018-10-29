@@ -33,3 +33,6 @@ You should get something akin to the following:
     Notice: /Stage[main]/Main/Node[default]/Package[cowsay]/ensure: created
     Notice: Applied catalog in 1.91 seconds
 
+You can run the `print_config.sh` script to print the config.
+
+Or run `apply.sh` to apply a manifest.
