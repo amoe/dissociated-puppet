@@ -87,6 +87,6 @@ with tempfile.TemporaryDirectory(prefix=TMP_PREFIX) as workspace:
             ['sudo', RUBY_PATH, 'install.rb'] + get_install_args(hiera_configuration)
         ])
 
-        do("downloading puppet", 'puppet.tar.gz', hiera_url, "puppet-4.8.2", [
+        do("downloading puppet", 'puppet.tar.gz', puppet_url, "puppet-4.8.2", [
             ['sudo', RUBY_PATH, 'install.rb'] + get_install_args(puppet_configuration)
         ])
