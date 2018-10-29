@@ -7,6 +7,8 @@ import tarfile
 import pathlib
 import tempfile
 
+from ops import set_up_vardir, copy_configuration
+
 PREFIX = '/opt/dissociated-puppet'
 TMP_PREFIX = 'dissociated-puppet-'
 
@@ -90,3 +92,6 @@ with tempfile.TemporaryDirectory(prefix=TMP_PREFIX) as workspace:
         do("downloading puppet", 'puppet.tar.gz', puppet_url, "puppet-4.8.2", [
             ['sudo', RUBY_PATH, 'install.rb'] + get_install_args(puppet_configuration)
         ])
+
+set_up_vardir()
+copy_configuration()
