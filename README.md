@@ -27,12 +27,14 @@ Then you can just run:
 
     sudo /opt/dissociated-puppet/bin/puppet  apply test.pp
 
-You should get something akin to the following:
-
-    Notice: Compiled catalog for myhost.solasistim.net in environment production in 0.60 seconds
-    Notice: /Stage[main]/Main/Node[default]/Package[cowsay]/ensure: created
-    Notice: Applied catalog in 1.91 seconds
 
 You can run the `print_config.sh` script to print the config.
 
 Or run `apply.sh` to apply a manifest.
+
+You should get something akin to the following:
+
+    -bash-4.2$ sudo sh apply.sh test-centos.pp 
+    Notice: Compiled catalog for myhost.solasistim.net in environment production in 0.46 seconds
+    Notice: /Stage[main]/Main/Node[default]/Package[fortune-mod]/ensure: created
+    Notice: Applied catalog in 3.71 seconds
