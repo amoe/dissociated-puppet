@@ -5,13 +5,17 @@ import subprocess
 import util
 import tarfile
 import pathlib
+import tempfile
 
 PREFIX = '/opt/dissociated-puppet'
+TMP_PREFIX = 'dissociated-puppet-'
 
 ruby_url = "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz"
 facter_url = "https://downloads.puppetlabs.com/facter/facter-2.4.6.tar.gz"
 hiera_url = "https://downloads.puppetlabs.com/hiera/hiera-3.2.0.tar.gz"
 puppet_url = "https://downloads.puppetlabs.com/puppet/puppet-4.8.2.tar.gz"
+
+
 
 # SIZE:   17813577 bytes
 # SHA1:   1014ee699071aa2ddd501907d18cbe15399c997d
@@ -23,8 +27,6 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)8s - %(name)s - %(message)s"
 )
 
-workspace = "/home/amoe/workspace"
-util.mkdir_uncaring(workspace)
 
 facter_configuration = {
     'sitelibdir': '/opt/dissociated-puppet/lib/ruby/site_ruby',
@@ -59,46 +61,32 @@ def get_install_args(configuration):
     return args
 
 
-with util.cd(workspace):
-    debug("downloading ruby")
-    local_filename = 'ruby.tar.gz'
+def do(log_message, local_filename, ruby_url, expected_unpack_dir, commands):
+    debug(log_message)
     urllib.request.urlretrieve(ruby_url, local_filename)
     util.extract_tar(local_filename)
 
-    with util.cd("ruby-2.3.3"):
-        subprocess.check_call(['./configure', '--prefix', PREFIX])
-        subprocess.check_call(['make'])
-        subprocess.check_call(['sudo', 'make', 'install'])
+    with util.cd(expected_unpack_dir):
+        for command in commands:
+            subprocess.check_call(command)
 
-    debug("downloading facter")
-    local_filename = "facter.tar.gz"
-    urllib.request.urlretrieve(facter_url, local_filename)
-    util.extract_tar(local_filename)
+with tempfile.TemporaryDirectory(prefix=TMP_PREFIX) as workspace:
+    debug("working in temporary directory %s", workspace)
+    with util.cd(workspace):
+        do("downloading ruby", 'ruby.tar.gz', ruby_url, "ruby-2.3.3", [
+            ['./configure', '--prefix', PREFIX],
+            ['make'],
+            ['sudo', 'make', 'install']
+        ])
 
-    with util.cd("facter-2.4.6"):
-        subprocess.check_call(
-            ['sudo', RUBY_PATH, 'install.rb']
-            + get_install_args(facter_configuration)
-        )
+        do("downloading facter", 'facter.tar.gz', facter_url, "facter-2.4.6", [
+            ['sudo', RUBY_PATH, 'install.rb'] + get_install_args(facter_configuration)
+        ])
 
-    debug("downloading hiera")
-    local_filename = "hiera.tar.gz"
-    urllib.request.urlretrieve(hiera_url, local_filename)
-    util.extract_tar(local_filename)
+        do("downloading hiera", 'hiera.tar.gz', hiera_url, "hiera-3.2.0", [
+            ['sudo', RUBY_PATH, 'install.rb'] + get_install_args(hiera_configuration)
+        ])
 
-    with util.cd("hiera-3.2.0"):
-        subprocess.check_call(
-            ['sudo', RUBY_PATH, 'install.rb']
-            + get_install_args(hiera_configuration)
-        )
-
-    debug("downloading puppet")
-    local_filename = 'puppet.tar.gz'
-    urllib.request.urlretrieve(puppet_url, local_filename)
-    util.extract_tar(local_filename)
-
-    with util.cd("puppet-4.8.2"):
-        subprocess.check_call(
-            ['sudo', RUBY_PATH, 'install.rb']
-            + get_install_args(puppet_configuration)
-        )
+        do("downloading puppet", 'puppet.tar.gz', hiera_url, "puppet-4.8.2", [
+            ['sudo', RUBY_PATH, 'install.rb'] + get_install_args(puppet_configuration)
+        ])

@@ -5,7 +5,7 @@
 * Version-locked to 4.8.2
 * Uses ruby 2.3.3
 * Python 3.4+ (available from EPEL as `python34`)
-* Basic development tools needed: `gcc`, `openssl-devel`
+* Basic development tools needed: `gcc`, `openssl-devel` (`libssl1.0-dev` on Debian)
 
 ## Masterless usage with an existing Puppet repository
 
