@@ -4,7 +4,7 @@ puppet_root=/opt/dissociated-puppet
 confdir="${puppet_root}/etc/puppet"
 ruby_path="${puppet_root}/lib/ruby/site_ruby"
 
-if "$#" -eq 0; then
+if [ "$#" -eq 0 ]; then
     echo "Need a manifest to apply." >&2
     exit 1
 fi
