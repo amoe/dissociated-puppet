@@ -48,3 +48,8 @@ You should get something akin to the following:
 
 # Install
 
+# Contended resources
+
+Multiple puppets on a system will be able to store their own cronjobs.  That is,
+a dissociated-puppet can create cronjobs that will remain untouched by the system
+puppet.
