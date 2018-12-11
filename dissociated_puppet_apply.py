@@ -18,6 +18,7 @@ subprocess.check_call([
     puppet_bin_path,
     "apply",
     "--confdir", confdir,
+    "--modulepath", './modules',
     "--verbose", "--debug",
     manifest
 ])
